@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zwb.dao.GroupMapper">
+    <resultMap id="BaseResultMap" type="com.zwb.pojo.Group">
+        <id column="group_id" jdbcType="VARCHAR" property="group_id" />
+        <result column="group_name" jdbcType="VARCHAR" property="group_name" />
+        <result column="group_manager" jdbcType="VARCHAR" property="group_manager" />
+    </resultMap>
+    <!-- 全部数据-->
+    <sql id="Base_Column_List">
+    group_id,group_nam,group_manager
+    </sql>
+
+
+    <delete id="deleteByGroupId" parameterType="java.lang.String">
+    delete from group
+    where group_id = #{group_id}
+    </delete>
+
+    <!-- 插入数据-->
+    <insert id="insert" parameterType="com.zwb.pojo.Group">
+    insert into group (group_id,group_nam,group_manager)
+    values (#{group_id}, #{group_nam}, #{group_manager})
+    </insert>
+
+    <!--根据主键查询-->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from group
+        where group_id = #{group_id}
+    </select>
+
+    <!-- 根据组名查询，可能有多条数据-->
+    <select id="selectByGroupName" parameterType="java.lang.String" resultType="com.zwb.pojo.Group">
+        select
+        <include refid="Base_Column_List"/>
+        from group
+        where group_nam like #{group_nam}
+    </select>
+</mapper>

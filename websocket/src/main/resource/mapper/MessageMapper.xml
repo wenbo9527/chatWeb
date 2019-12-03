@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zwb.dao.MessageMapper">
+    <resultMap id="BaseResultMap" type="com.zwb.pojo.Message">
+        <id column="mid" jdbcType="VARCHAR" property="mid" />
+        <result column="uid_set" jdbcType="VARCHAR" property="uid_set" />
+        <result column="uid_get" jdbcType="VARCHAR" property="uid_get" />
+        <result column="group_id" jdbcType="VARCHAR" property="group_id" />
+        <result column="message" jdbcType="VARCHAR" property="message" />
+        <result column="mtime" jdbcType="DATE" property="mtime" />
+        <result column="status" jdbcType="TINYINT" property="status"/>
+
+    </resultMap>
+    <!-- 全部数据-->
+    <sql id="Base_Column_List">
+    mid,uid_set,uid_get,group_id, message, mtime,status
+    </sql>
+
+    <!--删除消息 -->
+    <delete id="deleteByMid" parameterType="java.lang.String">
+    delete from message
+    where mid = #{mid}
+    </delete>
+
+    <!-- 删除两个用户之间的所有消息-->
+    <delete id="deleteByUid">
+    delete from message
+    where uid_set = #{0} and uid_get = #{1}
+    </delete>
+
+    <!-- 插入数据，发送消息-->
+    <insert id="insert" parameterType="com.zwb.pojo.Message">
+    insert into message (mid,uid_set,uid_get, message, mtime,status)
+    values (#{mid}, #{uid_set}, #{uid_get}, #{message}, #{mtime},#{status})
+    </insert>
+
+    <!--根据主键查询-->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from message
+        where mid = #{mid}
+    </select>
+
+    <!-- 搜索发送的信息-->
+    <select id="selectByUid" resultType="com.zwb.pojo.Message">
+        select
+        <include refid="Base_Column_List"/>
+        from message
+        where uid_set = #{0} and uid_get = #{1} order by mtime
+    </select>
+
+    <!-- 群内消息-->
+    <select id="selectByGroupId" parameterType="java.lang.String" resultType="com.zwb.pojo.Message">
+        select
+        <include refid="Base_Column_List"/>
+        from message
+        where group_id = #{group_id} order by mtime
+    </select>
+
+    <!-- 模糊搜索消息-->
+    <select id="selectByMessageAndUid" parameterType="java.lang.String" resultType="com.zwb.pojo.Message">
+        select
+        <include refid="Base_Column_List"/>
+        from message
+        where message like  '%#{0}%' and uid_set = #{1} and uid_get = #{2} order by mtime
+    </select>
+
+    <!-- 模糊搜索消息-->
+    <select id="selectByMessageAndGroupId" parameterType="java.lang.String" resultType="com.zwb.pojo.Message">
+        select
+        <include refid="Base_Column_List"/>
+        from message
+        where message like  '%#{0}%' and group_id = #{1} order by mtime
+    </select>
+</mapper>
